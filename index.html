@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+    <link rel="stylesheet" href="./index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="questions">
+      <h2>Voter Preferences Scale</h2>
+      <section>
+        <div id="que_image">
+          <!-- Here I've inserted images from JavaScript -->
+        </div>
+        <div>
+          <ul>
+            <li class="blue-bg"><input name="Options" type="radio" id="option-1">Attractive</input></li>
+            <li class="blue-bg"><input name="Options" type="radio" id="option-2">Average</input></li>
+            <li class="blue-bg"><input name="Options" type="radio" id="option-3">Unattractive</input></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <div class="timer"></div>
+    <div id="gameOver" class="hidden">
+      <h3>Thank you for participating!</h3>
+    </div>
+    
+    <script type="module">
+       
+// Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+        import { getFirestore, collection, doc, updateDoc, increment, setDoc} from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAj0LEw1RN1-bqllxj62psAAtua-zxQvkA",
+          authDomain: "dlsu-vps.firebaseapp.com",
+          projectId: "dlsu-vps",
+          storageBucket: "dlsu-vps.appspot.com",
+          messagingSenderId: "1059445914752",
+          appId: "1:1059445914752:web:41a92d21e5ca06c555ba65"
+        };
+      
+        // Initialize Firebase
+        initializeApp(firebaseConfig);
+        const db = getFirestore();
+        const colRef = collection(db, 'Survey Responses')
+        
+        var img = document.createElement("img");
+        var src = document.getElementById("que_image");
+        var userAnsRad = document.getElementsByName("Options");
+        let index = 1;
+        let index2 = 0;
+        let score = 0;
+        let userAns = 0;
+
+        const nextQues = () => {
+  
+          if (index > 12) {
+            const docRef = doc(db, 'Survey Responses', 'Candidate 12');
+            if (document.getElementById("option-1").checked == true) {
+              updateDoc(docRef, {Attractive:increment(1)});
+
+            } else if (document.getElementById("option-2").checked == true) {
+              updateDoc(docRef, {Average:increment(1)});
+
+            } else if (document.getElementById("option-3").checked == true) {
+              updateDoc(docRef, {Unattractive:increment(1)});
+            }
+            gameOver();
+            return;
+          } else {
+            setTimeout(nextQues, 10000);
+            img.src = "resources/Candidate " + index + ".png";
+            img.style.width = "70%";
+            img.style.height = "auto";
+            src.appendChild(img);
+            
+            const docRef = doc(db, 'Survey Responses', 'Candidate ' + index2);
+        
+            if (document.getElementById("option-1").checked == true) {
+              updateDoc(docRef, {Attractive:increment(1)});
+
+            } else if (document.getElementById("option-2").checked == true) {
+              updateDoc(docRef, {Average:increment(1)});
+
+            } else if (document.getElementById("option-3").checked == true) {
+              updateDoc(docRef, {Unattractive:increment(1)});
+            }
+            document.getElementById("option-1").checked = false;
+            document.getElementById("option-2").checked = false;
+            document.getElementById("option-3").checked = false;
+          }
+          index++;
+          index2++;
+        };
+        nextQues();
+
+        function gameOver() {
+          document.getElementById("gameOver").classList.remove("hidden");
+          document.querySelector(".timer").style.animation = "none";
+          document.querySelector(".timer").style["background-color"] = "gray";
+        }
+
+      </script>
+
+  </body>
+
+</html>
+
